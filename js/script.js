@@ -1,6 +1,8 @@
 /* start the external action and say hello */
 console.log("App is alive");
 
+
+ 
 /** #10 global #array of channels #arr*/
 var channels = [
     yummy,
@@ -27,7 +29,7 @@ var currentLocation = {
  * Switch channels name in the right app bar
  * @param channelObject
  */
-function switchChannel(channelObject) {
+function switchChannel(channelObject,ChannelElement) {
     // Log the channel switch
     console.log("Tuning in to channel", channelObject);
 
@@ -56,7 +58,27 @@ function switchChannel(channelObject) {
 
     /* store selected channel in global variable */
     currentChannel = channelObject;
+
+    //#challenge 11- make the #channels work
+
+    $('ChannelElement').addClass('selected');
+
+    //#11 #messages : call showMessages function
+    showMessages(); 
 }
+
+    /**
+    * #11 #messages: This function creates all messages that are 
+    * saved in a channel's messages 
+    */
+    function showMessages() {
+    
+        $.each([yummy.messages], function( i, value ){
+            $('#messages').append(value);
+            
+          });
+      
+    }
 
 /* liking a channel on #click */
 function star() {
@@ -216,6 +238,9 @@ function compareFavorites(channelA, channelB) {
 
 function listChannels(criterion) {
     // #10 #sorting: #sort channels#array by the criterion #parameter
+    console.log("the current channel is",currentChannel);
+    
+    var highlightedChannel=currentChannel;
     channels.sort(criterion);
 
     // #10 #sorting #duplicate: empty list
@@ -225,6 +250,10 @@ function listChannels(criterion) {
     for (i = 0; i < channels.length; i++) {
         $('#channels ul').append(createChannelElement(channels[i]));
     };
+
+    // the list channel currently highlight the selected channel whenever the sort order change
+    switchChannel(highlightedChannel);
+    
 }
 
 /**
@@ -306,10 +335,21 @@ function createChannelElement(channelObject) {
             <i class="fas fa-chevron-right"></i>
         </span>
      </li>
-     */
+     */ 
+
+     //This function enable the click event listener
+
+    /*$('li').click(function() {
+
+        console.log("channel clicked ",$(this).channelObject.name );
+       // $(this).switchChannel(channelObject.name);
+      });*/
+    var channel = $('<li>').text(channelObject.name); 
+    channel.click(function() {switchChannel(channelObject)});
+     
 
     // create a channel
-    var channel = $('<li>').text(channelObject.name);
+    //var channel = $('<li>').text(channelObject.name);
 
     // create and append channel meta
     var meta = $('<span>').addClass('channel-meta').appendTo(channel);
@@ -327,7 +367,11 @@ function createChannelElement(channelObject) {
 
     // return the complete channel
     return channel;
+
+    
 }
+
+  
 
 /**
  * #10 #new: This function enables the "create new channel"-mode
@@ -355,3 +399,4 @@ function abortCreationMode() {
     $('#button-create').hide();
     $('#button-send').show();
 }
+
